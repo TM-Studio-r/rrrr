@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neon Image To Base64</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Tahoma,sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:#050510;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.container{
+    width:min(950px,100%);
+}
+
+.title{
+    text-align:center;
+    color:#00ffff;
+    margin-bottom:25px;
+    text-shadow:
+        0 0 10px #00ffff,
+        0 0 20px #00ffff,
+        0 0 40px #00ffff;
+}
+
+.drop-zone{
+    border:2px dashed #00ffff;
+    border-radius:25px;
+    padding:50px 20px;
+    text-align:center;
+    cursor:pointer;
+    transition:.3s;
+    color:white;
+    background:rgba(0,255,255,.05);
+
+    box-shadow:
+        0 0 10px #00ffff,
+        inset 0 0 10px #00ffff;
+}
+
+.drop-zone:hover,
+.drop-zone.dragover{
+    transform:scale(1.02);
+    background:rgba(0,255,255,.12);
+
+    box-shadow:
+        0 0 20px #00ffff,
+        0 0 40px #00ffff,
+        inset 0 0 20px #00ffff;
+}
+
+.drop-zone p{
+    font-size:18px;
+    line-height:1.8;
+}
+
+input[type=file]{
+    display:none;
+}
+
+.actions{
+    margin-top:15px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    flex:1;
+    min-width:150px;
+    border:none;
+    border-radius:12px;
+    padding:14px;
+    cursor:pointer;
+    font-size:15px;
+    color:white;
+    background:#00bcd4;
+
+    box-shadow:
+        0 0 10px #00ffff,
+        0 0 20px #00ffff;
+
+    transition:.25s;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+}
+
+.preview{
+    margin-top:20px;
+    text-align:center;
+}
+
+.preview img{
+    max-width:250px;
+    max-height:250px;
+    border-radius:15px;
+    display:none;
+
+    box-shadow:
+        0 0 20px #00ffff,
+        0 0 40px #00ffff;
+}
+
+.output-box{
+    margin-top:20px;
+    position:relative;
+}
+
+textarea{
+    width:100%;
+    height:280px;
+    resize:none;
+    border:none;
+    outline:none;
+    border-radius:15px;
+    padding:15px;
+    background:#0d1020;
+    color:#00ffff;
+    font-size:13px;
+
+    box-shadow:
+        0 0 10px #00ffff;
+}
+
+.copy-btn{
+    position:absolute;
+    left:10px;
+    top:10px;
+}
+
+.footer{
+    text-align:center;
+    margin-top:15px;
+    color:#aaa;
+    font-size:13px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1 class="title">
+        ⚡ Image → Base64 Converter ⚡
+    </h1>
+
+    <label class="drop-zone" id="dropZone">
+
+        <input
+            type="file"
+            id="fileInput"
+            accept="image/*">
+
+        <p>
+            📸 عکس را انتخاب کن<br>
+            یا بکش و داخل این کادر رها کن<br>
+            یا روی دکمه Paste بزن
+        </p>
+
+    </label>
+
+    <div class="actions">
+
+        <button class="btn" id="pasteBtn">
+            📋 Paste Image
+        </button>
+
+        <button class="btn" id="clearBtn">
+            🗑 پاک کردن
+        </button>
+
+    </div>
+
+    <div class="preview">
+        <img id="previewImage">
+    </div>
+
+    <div class="output-box">
+
+        <button
+            class="btn copy-btn"
+            id="copyBtn">
+            📋 کپی
+        </button>
+
+        <textarea
+            id="output"
+            placeholder="Base64 اینجا نمایش داده می‌شود...">
+        </textarea>
+
+    </div>
+
+    <div class="footer">
+        Drag & Drop • File Picker • Clipboard Paste
+    </div>
+
+</div>
+
+<script>
+
+const dropZone = document.getElementById("dropZone");
+const fileInput = document.getElementById("fileInput");
+const previewImage = document.getElementById("previewImage");
+const output = document.getElementById("output");
+const copyBtn = document.getElementById("copyBtn");
+const pasteBtn = document.getElementById("pasteBtn");
+const clearBtn = document.getElementById("clearBtn");
+
+function convertFile(file){
+
+    if(!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function(event){
+
+        const dataUrl = event.target.result;
+
+        const base64 = dataUrl.split(",")[1];
+
+        output.value = base64;
+
+        previewImage.src = dataUrl;
+        previewImage.style.display = "inline-block";
+    };
+
+    reader.readAsDataURL(file);
+}
+
+dropZone.addEventListener("dragover",(e)=>{
+    e.preventDefault();
+    dropZone.classList.add("dragover");
+});
+
+dropZone.addEventListener("dragleave",()=>{
+    dropZone.classList.remove("dragover");
+});
+
+dropZone.addEventListener("drop",(e)=>{
+
+    e.preventDefault();
+
+    dropZone.classList.remove("dragover");
+
+    const file = e.dataTransfer.files[0];
+
+    convertFile(file);
+});
+
+fileInput.addEventListener("change",()=>{
+
+    const file = fileInput.files[0];
+
+    convertFile(file);
+});
+
+pasteBtn.addEventListener("click", async ()=>{
+
+    try{
+
+        const clipboardItems =
+            await navigator.clipboard.read();
+
+        for(const item of clipboardItems){
+
+            for(const type of item.types){
+
+                if(type.startsWith("image/")){
+
+                    const blob =
+                        await item.getType(type);
+
+                    const file = new File(
+                        [blob],
+                        "clipboard-image.png",
+                        {type:type}
+                    );
+
+                    convertFile(file);
+
+                    return;
+                }
+            }
+        }
+
+        alert("عکسی در کلیپ‌بورد پیدا نشد.");
+
+    }catch(error){
+
+        alert(
+            "اجازه دسترسی به Clipboard داده نشده است."
+        );
+    }
+});
+
+document.addEventListener("paste",(event)=>{
+
+    const items =
+        event.clipboardData?.items;
+
+    if(!items) return;
+
+    for(const item of items){
+
+        if(item.type.startsWith("image/")){
+
+            const file = item.getAsFile();
+
+            convertFile(file);
+
+            break;
+        }
+    }
+});
+
+copyBtn.addEventListener("click", async () => {
+
+    if (!output.value.trim()) return;
+
+    try {
+
+        if (navigator.clipboard && window.isSecureContext) {
+
+            await navigator.clipboard.writeText(output.value);
+
+        } else {
+
+            output.select();
+            output.setSelectionRange(0, 999999);
+
+            const success =
+                document.execCommand("copy");
+
+            if (!success)
+                throw new Error();
+        }
+
+        copyBtn.textContent = "✅ کپی شد";
+
+        setTimeout(() => {
+            copyBtn.textContent = "📋 کپی";
+        }, 2000);
+
+    } catch {
+
+        output.select();
+        output.setSelectionRange(0, 999999);
+
+        alert("متن انتخاب شد. دستی Copy کن.");
+    }
+});
+clearBtn.addEventListener("click",()=>{
+
+    output.value = "";
+
+    previewImage.src = "";
+
+    previewImage.style.display = "none";
+
+    fileInput.value = "";
+});
+
+</script>
+
+</body>
+</html>
