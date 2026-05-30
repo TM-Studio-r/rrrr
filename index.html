@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Neon Image To Base64</title>
+<title>Image To Base64</title>
 
 <style>
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Tahoma,sans-serif;
+    font-family:tahoma,sans-serif;
 }
 
 body{
@@ -26,14 +26,15 @@ body{
     width:min(950px,100%);
 }
 
-.title{
+h1{
     text-align:center;
     color:#00ffff;
-    margin-bottom:25px;
+    margin-bottom:20px;
+
     text-shadow:
-        0 0 10px #00ffff,
-        0 0 20px #00ffff,
-        0 0 40px #00ffff;
+    0 0 10px #00ffff,
+    0 0 20px #00ffff,
+    0 0 40px #00ffff;
 }
 
 .drop-zone{
@@ -41,256 +42,305 @@ body{
     border-radius:25px;
     padding:50px 20px;
     text-align:center;
+    color:white;
     cursor:pointer;
     transition:.3s;
-    color:white;
+
     background:rgba(0,255,255,.05);
 
     box-shadow:
-        0 0 10px #00ffff,
-        inset 0 0 10px #00ffff;
+    0 0 10px #00ffff,
+    inset 0 0 10px #00ffff;
 }
 
-.drop-zone:hover,
 .drop-zone.dragover{
     transform:scale(1.02);
-    background:rgba(0,255,255,.12);
 
     box-shadow:
-        0 0 20px #00ffff,
-        0 0 40px #00ffff,
-        inset 0 0 20px #00ffff;
-}
-
-.drop-zone p{
-    font-size:18px;
-    line-height:1.8;
+    0 0 20px #00ffff,
+    0 0 50px #00ffff,
+    inset 0 0 20px #00ffff;
 }
 
 input[type=file]{
     display:none;
 }
 
-.actions{
+.buttons{
     margin-top:15px;
     display:flex;
     gap:10px;
     flex-wrap:wrap;
 }
 
-.btn{
+button{
     flex:1;
-    min-width:150px;
     border:none;
-    border-radius:12px;
     padding:14px;
+    border-radius:12px;
     cursor:pointer;
-    font-size:15px;
+
     color:white;
     background:#00bcd4;
 
     box-shadow:
-        0 0 10px #00ffff,
-        0 0 20px #00ffff;
-
-    transition:.25s;
-}
-
-.btn:hover{
-    transform:translateY(-2px);
+    0 0 10px #00ffff,
+    0 0 20px #00ffff;
 }
 
 .preview{
-    margin-top:20px;
     text-align:center;
+    margin-top:20px;
 }
 
 .preview img{
     max-width:250px;
     max-height:250px;
-    border-radius:15px;
     display:none;
+    border-radius:15px;
 
     box-shadow:
-        0 0 20px #00ffff,
-        0 0 40px #00ffff;
-}
-
-.output-box{
-    margin-top:20px;
-    position:relative;
+    0 0 20px #00ffff,
+    0 0 40px #00ffff;
 }
 
 textarea{
     width:100%;
-    height:280px;
-    resize:none;
+    height:250px;
+    margin-top:20px;
     border:none;
     outline:none;
+    resize:none;
+
     border-radius:15px;
     padding:15px;
-    background:#0d1020;
+
+    background:#101420;
     color:#00ffff;
-    font-size:13px;
 
     box-shadow:
-        0 0 10px #00ffff;
+    0 0 10px #00ffff;
 }
 
-.copy-btn{
-    position:absolute;
-    left:10px;
-    top:10px;
-}
-
-.footer{
-    text-align:center;
-    margin-top:15px;
+.info{
+    margin-top:10px;
     color:#aaa;
-    font-size:13px;
+    text-align:center;
 }
 </style>
 </head>
-
 <body>
 
 <div class="container">
 
-    <h1 class="title">
-        ⚡ Image → Base64 Converter ⚡
-    </h1>
+<h1>⚡ Image → Base64 ⚡</h1>
 
-    <label class="drop-zone" id="dropZone">
+<label class="drop-zone" id="dropZone">
 
-        <input
-            type="file"
-            id="fileInput"
-            accept="image/*">
+<input
+type="file"
+id="fileInput"
+accept="image/*">
 
-        <p>
-            📸 عکس را انتخاب کن<br>
-            یا بکش و داخل این کادر رها کن<br>
-            یا روی دکمه Paste بزن
-        </p>
+<p>
+📸 انتخاب عکس<br>
+یا Drag & Drop<br>
+یا Paste از Clipboard
+</p>
 
-    </label>
+</label>
 
-    <div class="actions">
+<div class="buttons">
 
-        <button class="btn" id="pasteBtn">
-            📋 Paste Image
-        </button>
+<button id="pasteBtn">
+📋 Paste Image
+</button>
 
-        <button class="btn" id="clearBtn">
-            🗑 پاک کردن
-        </button>
+<button id="downloadBtn">
+📄 دانلود TXT
+</button>
 
-    </div>
+<button id="clearBtn">
+🗑 پاک کردن
+</button>
 
-    <div class="preview">
-        <img id="previewImage">
-    </div>
+</div>
 
-    <div class="output-box">
+<div class="preview">
+<img id="preview">
+</div>
 
-        <button
-            class="btn copy-btn"
-            id="copyBtn">
-            📋 کپی
-        </button>
+<textarea
+id="output"
+placeholder="Base64 اینجا نمایش داده می‌شود...">
+</textarea>
 
-        <textarea
-            id="output"
-            placeholder="Base64 اینجا نمایش داده می‌شود...">
-        </textarea>
-
-    </div>
-
-    <div class="footer">
-        Drag & Drop • File Picker • Clipboard Paste
-    </div>
+<div class="info">
+پس از تبدیل روی «دانلود TXT» بزن.
+</div>
 
 </div>
 
 <script>
 
-const dropZone = document.getElementById("dropZone");
-const fileInput = document.getElementById("fileInput");
-const previewImage = document.getElementById("previewImage");
-const output = document.getElementById("output");
-const copyBtn = document.getElementById("copyBtn");
-const pasteBtn = document.getElementById("pasteBtn");
-const clearBtn = document.getElementById("clearBtn");
+const dropZone =
+document.getElementById("dropZone");
+
+const fileInput =
+document.getElementById("fileInput");
+
+const output =
+document.getElementById("output");
+
+const preview =
+document.getElementById("preview");
+
+const pasteBtn =
+document.getElementById("pasteBtn");
+
+const downloadBtn =
+document.getElementById("downloadBtn");
+
+const clearBtn =
+document.getElementById("clearBtn");
 
 function convertFile(file){
 
     if(!file) return;
 
-    const reader = new FileReader();
+    const reader =
+    new FileReader();
 
-    reader.onload = function(event){
+    reader.onload = e => {
 
-        const dataUrl = event.target.result;
+        const dataUrl =
+        e.target.result;
 
-        const base64 = dataUrl.split(",")[1];
+        const base64 =
+        dataUrl.split(",")[1];
 
-        output.value = base64;
+        output.value =
+        base64;
 
-        previewImage.src = dataUrl;
-        previewImage.style.display = "inline-block";
+        preview.src =
+        dataUrl;
+
+        preview.style.display =
+        "inline-block";
     };
 
     reader.readAsDataURL(file);
 }
 
-dropZone.addEventListener("dragover",(e)=>{
+fileInput.addEventListener(
+"change",
+()=>{
+    convertFile(
+    fileInput.files[0]
+    );
+}
+);
+
+dropZone.addEventListener(
+"dragover",
+e=>{
     e.preventDefault();
-    dropZone.classList.add("dragover");
-});
+    dropZone.classList.add(
+    "dragover"
+    );
+}
+);
 
-dropZone.addEventListener("dragleave",()=>{
-    dropZone.classList.remove("dragover");
-});
+dropZone.addEventListener(
+"dragleave",
+()=>{
+    dropZone.classList.remove(
+    "dragover"
+    );
+}
+);
 
-dropZone.addEventListener("drop",(e)=>{
+dropZone.addEventListener(
+"drop",
+e=>{
 
     e.preventDefault();
 
-    dropZone.classList.remove("dragover");
+    dropZone.classList.remove(
+    "dragover"
+    );
 
-    const file = e.dataTransfer.files[0];
+    convertFile(
+    e.dataTransfer.files[0]
+    );
+}
+);
 
-    convertFile(file);
-});
+document.addEventListener(
+"paste",
+e=>{
 
-fileInput.addEventListener("change",()=>{
+    const items =
+    e.clipboardData?.items;
 
-    const file = fileInput.files[0];
+    if(!items) return;
 
-    convertFile(file);
-});
+    for(const item of items){
 
-pasteBtn.addEventListener("click", async ()=>{
+        if(
+        item.type.startsWith(
+        "image/"
+        )
+        ){
+
+            convertFile(
+            item.getAsFile()
+            );
+
+            break;
+        }
+    }
+}
+);
+
+pasteBtn.addEventListener(
+"click",
+async()=>{
 
     try{
 
         const clipboardItems =
-            await navigator.clipboard.read();
+        await navigator
+        .clipboard
+        .read();
 
-        for(const item of clipboardItems){
+        for(
+        const item
+        of clipboardItems
+        ){
 
-            for(const type of item.types){
+            for(
+            const type
+            of item.types
+            ){
 
-                if(type.startsWith("image/")){
+                if(
+                type.startsWith(
+                "image/"
+                )
+                ){
 
                     const blob =
-                        await item.getType(type);
+                    await item
+                    .getType(type);
 
-                    const file = new File(
-                        [blob],
-                        "clipboard-image.png",
-                        {type:type}
-                    );
+                    const file =
+                    new File(
+                    [blob],
+                    "clipboard.png",
+                    {
+                        type
+                    });
 
                     convertFile(file);
 
@@ -299,82 +349,79 @@ pasteBtn.addEventListener("click", async ()=>{
             }
         }
 
-        alert("عکسی در کلیپ‌بورد پیدا نشد.");
+        alert(
+        "عکسی در Clipboard نیست."
+        );
 
-    }catch(error){
+    }catch{
 
         alert(
-            "اجازه دسترسی به Clipboard داده نشده است."
+        "دسترسی Clipboard داده نشده."
         );
     }
-});
+}
+);
 
-document.addEventListener("paste",(event)=>{
+downloadBtn.addEventListener(
+"click",
+()=>{
 
-    const items =
-        event.clipboardData?.items;
+    if(
+    !output.value.trim()
+    ){
 
-    if(!items) return;
+        alert(
+        "ابتدا یک عکس انتخاب کن."
+        );
 
-    for(const item of items){
-
-        if(item.type.startsWith("image/")){
-
-            const file = item.getAsFile();
-
-            convertFile(file);
-
-            break;
-        }
+        return;
     }
-});
 
-copyBtn.addEventListener("click", async () => {
+    const blob =
+    new Blob(
+    [output.value],
+    {
+        type:
+        "text/plain;charset=utf-8"
+    });
 
-    if (!output.value.trim()) return;
+    const url =
+    URL.createObjectURL(
+    blob
+    );
 
-    try {
+    const a =
+    document.createElement(
+    "a"
+    );
 
-        if (navigator.clipboard && window.isSecureContext) {
+    a.href = url;
 
-            await navigator.clipboard.writeText(output.value);
+    a.download =
+    "base64.txt";
 
-        } else {
+    a.click();
 
-            output.select();
-            output.setSelectionRange(0, 999999);
+    URL.revokeObjectURL(
+    url
+    );
+}
+);
 
-            const success =
-                document.execCommand("copy");
-
-            if (!success)
-                throw new Error();
-        }
-
-        copyBtn.textContent = "✅ کپی شد";
-
-        setTimeout(() => {
-            copyBtn.textContent = "📋 کپی";
-        }, 2000);
-
-    } catch {
-
-        output.select();
-        output.setSelectionRange(0, 999999);
-
-        alert("متن انتخاب شد. دستی Copy کن.");
-    }
-});
-clearBtn.addEventListener("click",()=>{
+clearBtn.addEventListener(
+"click",
+()=>{
 
     output.value = "";
 
-    previewImage.src = "";
+    preview.src = "";
 
-    previewImage.style.display = "none";
+    preview.style.display =
+    "none";
 
     fileInput.value = "";
-});
+}
+);
 
 </script>
 
